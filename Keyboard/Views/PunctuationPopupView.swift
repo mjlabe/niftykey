@@ -33,6 +33,9 @@ struct PunctuationPopupView: View {
     }
 
     private var horizontalOffset: CGFloat {
+        // If keyFrame hasn't been set yet, stay centered on the key
+        guard anchorFrame.width > 0 else { return 0 }
+
         let popupWidth = CGFloat(Self.punctuations.count) * 37 + 8
         let halfPopup = popupWidth / 2
         let keyCenterX = anchorFrame.midX

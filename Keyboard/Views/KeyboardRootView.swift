@@ -51,5 +51,6 @@ struct KeyboardRootView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(theme.currentTheme.backgroundColor)
+        .coordinateSpace(name: "keyboard")
     }
 }

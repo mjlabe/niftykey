@@ -126,9 +126,13 @@ struct KeyView: View {
             .contentShape(Rectangle())
             .background(
                 GeometryReader { geo in
-                    Color.clear.onAppear {
-                        keyFrame = geo.frame(in: .global)
-                    }
+                    Color.clear
+                        .onAppear {
+                            keyFrame = geo.frame(in: .named("keyboard"))
+                        }
+                        .onChange(of: geo.frame(in: .named("keyboard"))) { newFrame in
+                            keyFrame = newFrame
+                        }
                 }
             )
             .gesture(
