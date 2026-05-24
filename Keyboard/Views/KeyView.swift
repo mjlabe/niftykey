@@ -144,10 +144,26 @@ struct KeyView: View {
                         }
                         if showPunctuation {
                             let punctuations = PunctuationPopupView.punctuations
+                            let popupWidth = CGFloat(punctuations.count) * 37 + 8
+                            let halfPopup = popupWidth / 2
+                            let keyCenterX = keyFrame.midX
+                            let screenWidth = UIScreen.main.bounds.width
+                            
+                            var horizontalOffset: CGFloat = 0
+                            let leftEdge = keyCenterX - halfPopup
+                            let rightEdge = keyCenterX + halfPopup
+                            if leftEdge < 4 {
+                                horizontalOffset = -leftEdge + 4
+                            } else if rightEdge > screenWidth - 4 {
+                                horizontalOffset = (screenWidth - 4) - rightEdge
+                            }
+                            
                             let dx = value.location.x - value.startLocation.x
                             let charWidth: CGFloat = 37
+                            let adjustedDx = dx - horizontalOffset
                             let startOffset = -CGFloat(punctuations.count) * charWidth / 2
-                            let idx = Int((dx - startOffset) / charWidth)
+                            let idx = Int((adjustedDx - startOffset) / charWidth)
+                            
                             if idx >= 0 && idx < punctuations.count {
                                 if punctuationSelectedIndex != idx {
                                     punctuationSelectedIndex = idx
@@ -156,10 +172,19 @@ struct KeyView: View {
                                 punctuationSelectedIndex = nil
                             }
                         } else if showAlternates && !alternates.isEmpty {
+                            let popupWidth = CGFloat(alternates.count) * 37 + 8
+                            let halfWidth = popupWidth / 2
+                            let screenWidth = UIScreen.main.bounds.width
+                            let keyCenterX = keyFrame.midX
+                            let clampedCenterX = min(max(keyCenterX, halfWidth + 4), screenWidth - halfWidth - 4)
+                            let positionOffset = clampedCenterX - keyCenterX
+                            
                             let dx = value.location.x - value.startLocation.x
                             let charWidth: CGFloat = 37
+                            let adjustedDx = dx - positionOffset
                             let startOffset = -CGFloat(alternates.count) * charWidth / 2
-                            let idx = Int((dx - startOffset) / charWidth)
+                            let idx = Int((adjustedDx - startOffset) / charWidth)
+                            
                             if idx >= 0 && idx < alternates.count {
                                 if alternateSelectedIndex != idx {
                                     alternateSelectedIndex = idx
