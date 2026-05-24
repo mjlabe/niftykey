@@ -264,6 +264,10 @@ struct KeyView: View {
             Image(systemName: "return")
                 .font(.system(size: 18))
                 .foregroundColor(theme.textColor)
+        case .emoji:
+            Image(systemName: "face.smiling")
+                .font(.system(size: 18))
+                .foregroundColor(theme.textColor)
         default:
             Text(displayText)
                 .font(.system(size: fontSize, weight: .regular, design: .default))

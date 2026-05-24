@@ -25,6 +25,8 @@ final class KeyboardViewController: UIInputViewController, TextDocumentProxyProv
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
+        inputView?.allowsSelfSizing = true
+        inputView?.backgroundColor = .clear
         setupEngines()
         setupUI()
         setupHeightConstraint()
@@ -103,6 +105,12 @@ final class KeyboardViewController: UIInputViewController, TextDocumentProxyProv
         let hostingVC = UIHostingController(rootView: rootView)
         hostingVC.view.translatesAutoresizingMaskIntoConstraints = false
         hostingVC.view.backgroundColor = .clear
+        if #available(iOS 16.0, *) {
+            hostingVC.sizingOptions = .intrinsicContentSize
+        }
+        if #available(iOS 16.4, *) {
+            hostingVC.safeAreaRegions = []
+        }
 
         addChild(hostingVC)
         view.addSubview(hostingVC.view)

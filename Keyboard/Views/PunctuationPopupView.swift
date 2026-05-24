@@ -24,21 +24,29 @@ struct PunctuationPopupView: View {
         .background(theme.keyColor)
         .cornerRadius(8)
         .shadow(color: theme.shadowColor, radius: 4, x: 0, y: -2)
-        .position(
-            x: clampedX,
-            y: anchorFrame.minY - 28
-        )
+        .fixedSize()
+        .offset(x: horizontalOffset)
     }
 
     private func isSelected(_ index: Int) -> Bool {
         selectedIndex == index
     }
 
-    private var clampedX: CGFloat {
+    private var horizontalOffset: CGFloat {
         let popupWidth = CGFloat(Self.punctuations.count) * 37 + 8
-        let halfWidth = popupWidth / 2
-        let rawX = anchorFrame.midX
+        let halfPopup = popupWidth / 2
+        let keyCenterX = anchorFrame.midX
         let screenWidth = UIScreen.main.bounds.width
-        return min(max(rawX, halfWidth + 4), screenWidth - halfWidth - 4)
+
+        // Calculate how far left or right we need to shift so popup stays on screen
+        let leftEdge = keyCenterX - halfPopup
+        let rightEdge = keyCenterX + halfPopup
+
+        if leftEdge < 4 {
+            return -leftEdge + 4
+        } else if rightEdge > screenWidth - 4 {
+            return (screenWidth - 4) - rightEdge
+        }
+        return 0
     }
 }
