@@ -33,6 +33,7 @@ final class KeyboardViewController: UIInputViewController, TextDocumentProxyProv
 
     private var heightConstraint: NSLayoutConstraint?
     private var backgroundView: UIView?
+    private var lastShiftTapTime: Date?
 
     override func loadView() {
         let customInputView = KeyboardInputView(frame: .zero, inputViewStyle: .keyboard)
@@ -235,7 +236,15 @@ final class KeyboardViewController: UIInputViewController, TextDocumentProxyProv
             updateAutoCapitalization()
 
         case .shift:
-            keyboardState.toggleShift()
+            let now = Date()
+            if let lastTap = lastShiftTapTime,
+               now.timeIntervalSince(lastTap) < 0.3 {
+                keyboardState.enableCapsLock()
+                lastShiftTapTime = nil
+            } else {
+                keyboardState.toggleShift()
+                lastShiftTapTime = now
+            }
             hapticEngine.modifierTap()
             soundEngine.modifierClick()
 
@@ -278,9 +287,6 @@ final class KeyboardViewController: UIInputViewController, TextDocumentProxyProv
 
     private func handleKeyLongPress(_ key: KeyDefinition) {
         switch key.type {
-        case .shift:
-            keyboardState.enableCapsLock()
-            hapticEngine.modifierTap()
         case .period:
             hapticEngine.modifierTap()
         case .backspace:
