@@ -6,7 +6,8 @@ struct KeyView: View {
     let key: KeyDefinition
     let shiftState: ShiftState
     let theme: KeyboardTheme
-    let longPressDelay: Double
+    let longPressDelayAlphanumeric: Double
+    let longPressDelayPunctuation: Double
     let onTap: () -> Void
     let onLongPress: () -> Void
     let onRelease: () -> Void
@@ -45,6 +46,17 @@ struct KeyView: View {
         return key.isModifier ? theme.specialKeyColor : theme.keyColor
     }
 
+    private var longPressDelay: Double {
+        switch key.type {
+        case .period, .comma, .special:
+            return longPressDelayPunctuation
+        case .character, .number:
+            return longPressDelayAlphanumeric
+        default:
+            return longPressDelayAlphanumeric
+        }
+    }
+    
     private var fontSize: CGFloat {
         switch key.type {
         case .character, .number:

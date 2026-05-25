@@ -31,7 +31,7 @@ struct SettingsView: View {
            let b = settings.customBackgroundColorBlue {
             return Color(red: r, green: g, blue: b)
         }
-        return Color(red: 0.82, green: 0.84, blue: 0.86)
+        return Color(red: 0.882, green: 0.886, blue: 0.902)
     }
     
     private static func hasCustomColor() -> Bool {
@@ -58,7 +58,8 @@ struct SettingsView: View {
             .onChange(of: settings.numberRowEnabled) { _ in settings.save() }
             .onChange(of: settings.doubleSpacePeriodEnabled) { _ in settings.save() }
             .onChange(of: settings.autoCapsEnabled) { _ in settings.save() }
-            .onChange(of: settings.longPressDelay) { _ in settings.save() }
+            .onChange(of: settings.longPressDelayAlphanumeric) { _ in settings.save() }
+            .onChange(of: settings.longPressDelayPunctuation) { _ in settings.save() }
             .onChange(of: backgroundColor) { _ in
                 if useCustomColor {
                     saveBackgroundColor()
@@ -121,12 +122,22 @@ struct SettingsView: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text("Long Press Delay")
+                    Text("Long Press Delay (Letters/Numbers)")
                     Spacer()
-                    Text(String(format: "%.2fs", settings.longPressDelay))
+                    Text(String(format: "%.2fs", settings.longPressDelayAlphanumeric))
                         .foregroundColor(.secondary)
                 }
-                Slider(value: $settings.longPressDelay, in: 0.1...0.8, step: 0.05)
+                Slider(value: $settings.longPressDelayAlphanumeric, in: 0.1...0.8, step: 0.05)
+            }
+            
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("Long Press Delay (Punctuation)")
+                    Spacer()
+                    Text(String(format: "%.2fs", settings.longPressDelayPunctuation))
+                        .foregroundColor(.secondary)
+                }
+                Slider(value: $settings.longPressDelayPunctuation, in: 0.1...0.8, step: 0.05)
             }
         } header: {
             Text("Typing")

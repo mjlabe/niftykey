@@ -7,7 +7,8 @@ struct KeyGridView: View {
     let shiftState: ShiftState
     let showNumberRow: Bool
     let theme: KeyboardTheme
-    let longPressDelay: Double
+    let longPressDelayAlphanumeric: Double
+    let longPressDelayPunctuation: Double
     let onKeyTap: (KeyDefinition) -> Void
     let onKeyLongPress: (KeyDefinition) -> Void
     let onKeyRelease: (KeyDefinition) -> Void
@@ -87,7 +88,8 @@ struct KeyGridView: View {
                     key: key,
                     shiftState: shiftState,
                     theme: theme,
-                    longPressDelay: longPressDelay,
+                    longPressDelayAlphanumeric: longPressDelayAlphanumeric,
+                    longPressDelayPunctuation: longPressDelayPunctuation,
                     onTap: { onKeyTap(key) },
                     onLongPress: { onKeyLongPress(key) },
                     onRelease: { onKeyRelease(key) },

@@ -2,8 +2,8 @@
 
 PROJECT = NiftyKey.xcodeproj
 SCHEME = NiftyKey
-SIMULATOR = iPhone 17
-SIMULATOR_OS = 26.1
+SIMULATOR = iPhone 16
+SIMULATOR_OS = 18.6
 CONFIGURATION = Debug
 
 help:

@@ -9,7 +9,8 @@ public struct KeyboardSettings: Sendable {
     public var numberRowEnabled: Bool
     public var doubleSpacePeriodEnabled: Bool
     public var autoCapsEnabled: Bool
-    public var longPressDelay: Double
+    public var longPressDelayAlphanumeric: Double
+    public var longPressDelayPunctuation: Double
     public var customBackgroundColorRed: Double?
     public var customBackgroundColorGreen: Double?
     public var customBackgroundColorBlue: Double?
@@ -23,7 +24,8 @@ public struct KeyboardSettings: Sendable {
         numberRowEnabled: Bool = false,
         doubleSpacePeriodEnabled: Bool = true,
         autoCapsEnabled: Bool = true,
-        longPressDelay: Double = 0.10,
+        longPressDelayAlphanumeric: Double = 0.10,
+        longPressDelayPunctuation: Double = 0.10,
         customBackgroundColorRed: Double? = nil,
         customBackgroundColorGreen: Double? = nil,
         customBackgroundColorBlue: Double? = nil
@@ -36,7 +38,8 @@ public struct KeyboardSettings: Sendable {
         self.numberRowEnabled = numberRowEnabled
         self.doubleSpacePeriodEnabled = doubleSpacePeriodEnabled
         self.autoCapsEnabled = autoCapsEnabled
-        self.longPressDelay = longPressDelay
+        self.longPressDelayAlphanumeric = longPressDelayAlphanumeric
+        self.longPressDelayPunctuation = longPressDelayPunctuation
         self.customBackgroundColorRed = customBackgroundColorRed
         self.customBackgroundColorGreen = customBackgroundColorGreen
         self.customBackgroundColorBlue = customBackgroundColorBlue
@@ -57,7 +60,8 @@ public struct KeyboardSettings: Sendable {
             numberRowEnabled: defaults.object(forKey: "numberRow") as? Bool ?? false,
             doubleSpacePeriodEnabled: defaults.object(forKey: "doubleSpacePeriod") as? Bool ?? true,
             autoCapsEnabled: defaults.object(forKey: "autoCaps") as? Bool ?? true,
-            longPressDelay: defaults.object(forKey: "longPressDelay") as? Double ?? 0.10,
+            longPressDelayAlphanumeric: defaults.object(forKey: "longPressDelayAlphanumeric") as? Double ?? 0.10,
+            longPressDelayPunctuation: defaults.object(forKey: "longPressDelayPunctuation") as? Double ?? 0.10,
             customBackgroundColorRed: defaults.object(forKey: "customBackgroundColorRed") as? Double,
             customBackgroundColorGreen: defaults.object(forKey: "customBackgroundColorGreen") as? Double,
             customBackgroundColorBlue: defaults.object(forKey: "customBackgroundColorBlue") as? Double
@@ -74,7 +78,8 @@ public struct KeyboardSettings: Sendable {
         defaults.set(numberRowEnabled, forKey: "numberRow")
         defaults.set(doubleSpacePeriodEnabled, forKey: "doubleSpacePeriod")
         defaults.set(autoCapsEnabled, forKey: "autoCaps")
-        defaults.set(longPressDelay, forKey: "longPressDelay")
+        defaults.set(longPressDelayAlphanumeric, forKey: "longPressDelayAlphanumeric")
+        defaults.set(longPressDelayPunctuation, forKey: "longPressDelayPunctuation")
         if let red = customBackgroundColorRed,
            let green = customBackgroundColorGreen,
            let blue = customBackgroundColorBlue {
