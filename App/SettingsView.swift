@@ -24,6 +24,7 @@ struct SettingsView: View {
             .onChange(of: settings.numberRowEnabled) { _ in settings.save() }
             .onChange(of: settings.doubleSpacePeriodEnabled) { _ in settings.save() }
             .onChange(of: settings.autoCapsEnabled) { _ in settings.save() }
+            .onChange(of: settings.longPressDelay) { _ in settings.save() }
         }
     }
 
@@ -56,6 +57,16 @@ struct SettingsView: View {
             Toggle("Swipe Typing", isOn: $settings.swipeTypingEnabled)
             Toggle("Double-Space Period", isOn: $settings.doubleSpacePeriodEnabled)
             Toggle("Auto Capitalization", isOn: $settings.autoCapsEnabled)
+            
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("Long Press Delay")
+                    Spacer()
+                    Text(String(format: "%.2fs", settings.longPressDelay))
+                        .foregroundColor(.secondary)
+                }
+                Slider(value: $settings.longPressDelay, in: 0.1...0.8, step: 0.05)
+            }
         } header: {
             Text("Typing")
         }

@@ -6,6 +6,7 @@ struct KeyView: View {
     let key: KeyDefinition
     let shiftState: ShiftState
     let theme: KeyboardTheme
+    let longPressDelay: Double
     let onTap: () -> Void
     let onLongPress: () -> Void
     let onRelease: () -> Void
@@ -22,6 +23,7 @@ struct KeyView: View {
     @State private var showPunctuation = false
     @State private var punctuationSelectedIndex: Int? = nil
     @State private var keyFrame: CGRect = .zero
+    @State private var lastShiftTapTime: Date? = nil
 
     private var displayText: String {
         switch key.type {
@@ -218,18 +220,33 @@ struct KeyView: View {
                     }
             )
             .simultaneousGesture(
-                LongPressGesture(minimumDuration: 0.35)
+                LongPressGesture(minimumDuration: longPressDelay)
                     .onEnded { _ in
                         if key.type == .period {
                             showPunctuation = true
                             showPopup = false
+                            onLongPress()
+                        } else if key.type == .shift {
+                            // Shift long-press no longer triggers caps lock
                         } else if !alternates.isEmpty {
                             showAlternates = true
                             showPopup = false
+                            onLongPress()
                         }
-                        onLongPress()
                     }
             )
+            .onTapGesture {
+                if key.type == .shift {
+                    let now = Date()
+                    if let lastTap = lastShiftTapTime, now.timeIntervalSince(lastTap) < 0.3 {
+                        onLongPress()
+                        lastShiftTapTime = nil
+                    } else {
+                        onTap()
+                        lastShiftTapTime = now
+                    }
+                }
+            }
     }
 
     // MARK: - Spacebar

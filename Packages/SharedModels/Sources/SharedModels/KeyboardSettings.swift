@@ -9,6 +9,7 @@ public struct KeyboardSettings: Sendable {
     public var numberRowEnabled: Bool
     public var doubleSpacePeriodEnabled: Bool
     public var autoCapsEnabled: Bool
+    public var longPressDelay: Double
 
     public init(
         hapticFeedbackEnabled: Bool = true,
@@ -18,7 +19,8 @@ public struct KeyboardSettings: Sendable {
         swipeTypingEnabled: Bool = true,
         numberRowEnabled: Bool = false,
         doubleSpacePeriodEnabled: Bool = true,
-        autoCapsEnabled: Bool = true
+        autoCapsEnabled: Bool = true,
+        longPressDelay: Double = 0.10
     ) {
         self.hapticFeedbackEnabled = hapticFeedbackEnabled
         self.soundFeedbackEnabled = soundFeedbackEnabled
@@ -28,6 +30,7 @@ public struct KeyboardSettings: Sendable {
         self.numberRowEnabled = numberRowEnabled
         self.doubleSpacePeriodEnabled = doubleSpacePeriodEnabled
         self.autoCapsEnabled = autoCapsEnabled
+        self.longPressDelay = longPressDelay
     }
 
     private static let suiteName = "group.com.niftykey.shared"
@@ -44,7 +47,8 @@ public struct KeyboardSettings: Sendable {
             swipeTypingEnabled: defaults.object(forKey: "swipeTyping") as? Bool ?? true,
             numberRowEnabled: defaults.object(forKey: "numberRow") as? Bool ?? false,
             doubleSpacePeriodEnabled: defaults.object(forKey: "doubleSpacePeriod") as? Bool ?? true,
-            autoCapsEnabled: defaults.object(forKey: "autoCaps") as? Bool ?? true
+            autoCapsEnabled: defaults.object(forKey: "autoCaps") as? Bool ?? true,
+            longPressDelay: defaults.object(forKey: "longPressDelay") as? Double ?? 0.10
         )
     }
 
@@ -58,5 +62,6 @@ public struct KeyboardSettings: Sendable {
         defaults.set(numberRowEnabled, forKey: "numberRow")
         defaults.set(doubleSpacePeriodEnabled, forKey: "doubleSpacePeriod")
         defaults.set(autoCapsEnabled, forKey: "autoCaps")
+        defaults.set(longPressDelay, forKey: "longPressDelay")
     }
 }

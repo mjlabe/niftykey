@@ -38,6 +38,7 @@ struct KeyboardRootView: View {
                     shiftState: state.shiftState,
                     showNumberRow: state.showNumberRow,
                     theme: theme.currentTheme,
+                    longPressDelay: state.settings.longPressDelay,
                     onKeyTap: onKeyTap,
                     onKeyLongPress: onKeyLongPress,
                     onKeyRelease: onKeyRelease,
