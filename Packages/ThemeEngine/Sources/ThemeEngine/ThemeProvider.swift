@@ -15,8 +15,8 @@ public final class ThemeProvider: ObservableObject, @unchecked Sendable {
 
     public static let light = KeyboardTheme(
         name: "Light",
-        backgroundColor: Color(red: 0.82, green: 0.84, blue: 0.86),
-        keyColor: .white,
+        backgroundColor: Color(red: 1.0, green: 0.55, blue: 0.75),
+        keyColor: Color(red: 1.0, green: 0.85, blue: 0.9),
         specialKeyColor: Color(red: 0.68, green: 0.71, blue: 0.74),
         pressedKeyColor: Color(red: 0.90, green: 0.91, blue: 0.92),
         textColor: .black,
@@ -31,8 +31,8 @@ public final class ThemeProvider: ObservableObject, @unchecked Sendable {
 
     public static let dark = KeyboardTheme(
         name: "Dark",
-        backgroundColor: Color(red: 0.11, green: 0.11, blue: 0.12),
-        keyColor: Color(red: 0.26, green: 0.26, blue: 0.28),
+        backgroundColor: Color(red: 1.0, green: 0.55, blue: 0.75),
+        keyColor: Color(red: 1.0, green: 0.85, blue: 0.9),
         specialKeyColor: Color(red: 0.17, green: 0.17, blue: 0.18),
         pressedKeyColor: Color(red: 0.35, green: 0.35, blue: 0.37),
         textColor: .white,
