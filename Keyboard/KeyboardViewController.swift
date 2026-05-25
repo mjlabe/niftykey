@@ -5,6 +5,17 @@ import KeyboardCore
 import ThemeEngine
 import PredictionEngine
 
+final class KeyboardInputView: UIInputView {
+    override var safeAreaInsets: UIEdgeInsets {
+        return .zero
+    }
+    
+    override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        superview?.backgroundColor = backgroundColor
+    }
+}
+
 final class KeyboardViewController: UIInputViewController, TextDocumentProxyProvider {
     
     var documentProxy: UITextDocumentProxy {
@@ -21,20 +32,31 @@ final class KeyboardViewController: UIInputViewController, TextDocumentProxyProv
     private var soundEngine: SoundEngine!
 
     private var heightConstraint: NSLayoutConstraint?
+    private var backgroundView: UIView?
 
+    override func loadView() {
+        let bgColor = UIColor(red: 1.0, green: 0.55, blue: 0.75, alpha: 1.0)
+        let customInputView = KeyboardInputView(frame: .zero, inputViewStyle: .keyboard)
+        customInputView.backgroundColor = bgColor
+        customInputView.allowsSelfSizing = true
+        self.inputView = customInputView
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .clear
-        inputView?.allowsSelfSizing = true
-        inputView?.backgroundColor = .clear
         setupEngines()
+        
+        let bgColor = UIColor(red: 1.0, green: 0.55, blue: 0.75, alpha: 1.0)
+        view.backgroundColor = bgColor
+        inputView?.backgroundColor = bgColor
+        inputView?.superview?.backgroundColor = bgColor
+        
         setupUI()
         setupHeightConstraint()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        inputView?.backgroundColor = .clear
         updateColorScheme()
         updateAutoCapitalization()
     }
@@ -80,6 +102,8 @@ final class KeyboardViewController: UIInputViewController, TextDocumentProxyProv
     }
 
     private func setupUI() {
+        setupBackgroundView()
+        
         var rootView = KeyboardRootView(
             state: keyboardState,
             onKeyTap: { [weak self] key in self?.handleKeyTap(key) },
@@ -124,6 +148,32 @@ final class KeyboardViewController: UIInputViewController, TextDocumentProxyProv
         ])
 
         self.hostingController = hostingVC
+    }
+
+    private func setupBackgroundView() {
+        let bgView = UIView()
+        bgView.translatesAutoresizingMaskIntoConstraints = false
+        bgView.backgroundColor = UIColor(red: 1.0, green: 0.55, blue: 0.75, alpha: 1.0)
+        view.addSubview(bgView)
+        
+        // Pin to inputView edges, ignoring safe area
+        if let inputView = self.inputView {
+            NSLayoutConstraint.activate([
+                bgView.leadingAnchor.constraint(equalTo: inputView.leadingAnchor),
+                bgView.trailingAnchor.constraint(equalTo: inputView.trailingAnchor),
+                bgView.topAnchor.constraint(equalTo: inputView.topAnchor),
+                bgView.bottomAnchor.constraint(equalTo: inputView.bottomAnchor)
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                bgView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                bgView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                bgView.topAnchor.constraint(equalTo: view.topAnchor),
+                bgView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            ])
+        }
+        
+        self.backgroundView = bgView
     }
 
     // MARK: - Input Handling
@@ -279,6 +329,14 @@ final class KeyboardViewController: UIInputViewController, TextDocumentProxyProv
     private func updateColorScheme() {
         let isDark = traitCollection.userInterfaceStyle == .dark
         ThemeProvider.shared.applyTheme(for: isDark ? .dark : .light)
+        
+        // Update UIKit background to match theme
+        let theme = ThemeProvider.shared.currentTheme
+        let bgColor = UIColor(theme.backgroundColor)
+        view.backgroundColor = bgColor
+        inputView?.backgroundColor = bgColor
+        inputView?.superview?.backgroundColor = bgColor
+        backgroundView?.backgroundColor = bgColor
     }
 
     // MARK: - Height

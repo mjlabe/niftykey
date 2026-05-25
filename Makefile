@@ -2,7 +2,8 @@
 
 PROJECT = NiftyKey.xcodeproj
 SCHEME = NiftyKey
-SIMULATOR = iPhone 17
+SIMULATOR = iPhone 16
+SIMULATOR_OS = 18.6
 CONFIGURATION = Debug
 
 help:
@@ -20,7 +21,7 @@ build: generate ## Build the project
 	@echo "Building NiftyKey..."
 	@xcodebuild -project $(PROJECT) \
 		-scheme $(SCHEME) \
-		-destination 'platform=iOS Simulator,name=$(SIMULATOR)' \
+		-destination 'platform=iOS Simulator,name=$(SIMULATOR),OS=$(SIMULATOR_OS)' \
 		-configuration $(CONFIGURATION) \
 		-quiet \
 		build
@@ -59,7 +60,7 @@ test: generate ## Run unit tests
 	@xcodebuild test \
 		-project $(PROJECT) \
 		-scheme $(SCHEME) \
-		-destination 'platform=iOS Simulator,name=$(SIMULATOR)' \
+		-destination 'platform=iOS Simulator,name=$(SIMULATOR),OS=$(SIMULATOR_OS)' \
 		-quiet
 	@echo "Tests complete"
 
@@ -79,7 +80,7 @@ quick: generate ## Quick build without xcpretty
 	@echo "Quick building..."
 	@xcodebuild -project $(PROJECT) \
 		-scheme $(SCHEME) \
-		-destination 'platform=iOS Simulator,name=$(SIMULATOR)' \
+		-destination 'platform=iOS Simulator,name=$(SIMULATOR),OS=$(SIMULATOR_OS)' \
 		-configuration $(CONFIGURATION) \
 		build
 	@echo "Build complete"

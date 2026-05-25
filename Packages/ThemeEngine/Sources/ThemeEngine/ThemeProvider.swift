@@ -21,7 +21,7 @@ public final class ThemeProvider: ObservableObject, @unchecked Sendable {
         pressedKeyColor: Color(red: 0.90, green: 0.91, blue: 0.92),
         textColor: .black,
         secondaryTextColor: Color(red: 0.4, green: 0.4, blue: 0.4),
-        suggestionBarColor: Color(red: 0.82, green: 0.84, blue: 0.86),
+        suggestionBarColor: Color(red: 1.0, green: 0.55, blue: 0.75),
         suggestionTextColor: .black,
         borderColor: Color(red: 0.75, green: 0.77, blue: 0.79),
         shadowColor: Color.black.opacity(0.3),
