@@ -75,6 +75,8 @@ final class KeyboardViewController: UIInputViewController, TextDocumentProxyProv
            let g = settings.customBackgroundColorGreen,
            let b = settings.customBackgroundColorBlue {
             ThemeProvider.shared.setCustomBackgroundColor(red: r, green: g, blue: b)
+        } else {
+            ThemeProvider.shared.setCustomBackgroundColor(nil)
         }
     }
 
