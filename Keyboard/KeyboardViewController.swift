@@ -35,24 +35,46 @@ final class KeyboardViewController: UIInputViewController, TextDocumentProxyProv
     private var backgroundView: UIView?
 
     override func loadView() {
-        let bgColor = UIColor(red: 1.0, green: 0.55, blue: 0.75, alpha: 1.0)
         let customInputView = KeyboardInputView(frame: .zero, inputViewStyle: .keyboard)
-        customInputView.backgroundColor = bgColor
+        customInputView.backgroundColor = loadBackgroundUIColor()
         customInputView.allowsSelfSizing = true
         self.inputView = customInputView
+    }
+    
+    private func loadBackgroundUIColor() -> UIColor {
+        let settings = KeyboardSettings.load()
+        if let r = settings.customBackgroundColorRed,
+           let g = settings.customBackgroundColorGreen,
+           let b = settings.customBackgroundColorBlue {
+            return UIColor(red: r, green: g, blue: b, alpha: 1.0)
+        }
+        let isDark = traitCollection.userInterfaceStyle == .dark
+        return isDark 
+            ? UIColor(red: 0.11, green: 0.11, blue: 0.12, alpha: 1.0)
+            : UIColor(red: 0.82, green: 0.84, blue: 0.86, alpha: 1.0)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupEngines()
+        applyCustomColorIfSet()
         
-        let bgColor = UIColor(red: 1.0, green: 0.55, blue: 0.75, alpha: 1.0)
+        let bgColor = loadBackgroundUIColor()
         view.backgroundColor = bgColor
         inputView?.backgroundColor = bgColor
         inputView?.superview?.backgroundColor = bgColor
         
         setupUI()
         setupHeightConstraint()
+    }
+    
+    private func applyCustomColorIfSet() {
+        let settings = KeyboardSettings.load()
+        if let r = settings.customBackgroundColorRed,
+           let g = settings.customBackgroundColorGreen,
+           let b = settings.customBackgroundColorBlue {
+            ThemeProvider.shared.setCustomBackgroundColor(red: r, green: g, blue: b)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -153,7 +175,7 @@ final class KeyboardViewController: UIInputViewController, TextDocumentProxyProv
     private func setupBackgroundView() {
         let bgView = UIView()
         bgView.translatesAutoresizingMaskIntoConstraints = false
-        bgView.backgroundColor = UIColor(red: 1.0, green: 0.55, blue: 0.75, alpha: 1.0)
+        bgView.backgroundColor = loadBackgroundUIColor()
         view.addSubview(bgView)
         
         // Pin to inputView edges, ignoring safe area
@@ -327,6 +349,8 @@ final class KeyboardViewController: UIInputViewController, TextDocumentProxyProv
     }
 
     private func updateColorScheme() {
+        applyCustomColorIfSet()
+        
         let isDark = traitCollection.userInterfaceStyle == .dark
         ThemeProvider.shared.applyTheme(for: isDark ? .dark : .light)
         

@@ -1,9 +1,43 @@
 import SwiftUI
 import SharedModels
+#if canImport(UIKit)
+import UIKit
+#endif
+
+private extension Color {
+    var rgbComponents: (red: Double, green: Double, blue: Double) {
+        #if canImport(UIKit)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        UIColor(self).getRed(&red, green: &green, blue: &blue, alpha: nil)
+        return (Double(red), Double(green), Double(blue))
+        #else
+        return (0.5, 0.5, 0.5)
+        #endif
+    }
+}
 
 struct SettingsView: View {
     @State private var settings = KeyboardSettings.load()
     @State private var showingResetAlert = false
+    @State private var backgroundColor: Color = SettingsView.loadBackgroundColor()
+    @State private var useCustomColor: Bool = SettingsView.hasCustomColor()
+    
+    private static func loadBackgroundColor() -> Color {
+        let settings = KeyboardSettings.load()
+        if let r = settings.customBackgroundColorRed,
+           let g = settings.customBackgroundColorGreen,
+           let b = settings.customBackgroundColorBlue {
+            return Color(red: r, green: g, blue: b)
+        }
+        return Color(red: 0.82, green: 0.84, blue: 0.86)
+    }
+    
+    private static func hasCustomColor() -> Bool {
+        let settings = KeyboardSettings.load()
+        return settings.customBackgroundColorRed != nil
+    }
 
     var body: some View {
         NavigationStack {
@@ -25,7 +59,34 @@ struct SettingsView: View {
             .onChange(of: settings.doubleSpacePeriodEnabled) { _ in settings.save() }
             .onChange(of: settings.autoCapsEnabled) { _ in settings.save() }
             .onChange(of: settings.longPressDelay) { _ in settings.save() }
+            .onChange(of: backgroundColor) { _ in
+                if useCustomColor {
+                    saveBackgroundColor()
+                }
+            }
+            .onChange(of: useCustomColor) { newValue in
+                if newValue {
+                    saveBackgroundColor()
+                } else {
+                    clearBackgroundColor()
+                }
+            }
         }
+    }
+    
+    private func saveBackgroundColor() {
+        let components = backgroundColor.rgbComponents
+        settings.customBackgroundColorRed = components.red
+        settings.customBackgroundColorGreen = components.green
+        settings.customBackgroundColorBlue = components.blue
+        settings.save()
+    }
+    
+    private func clearBackgroundColor() {
+        settings.customBackgroundColorRed = nil
+        settings.customBackgroundColorGreen = nil
+        settings.customBackgroundColorBlue = nil
+        settings.save()
     }
 
     // MARK: - Sections
@@ -84,8 +145,18 @@ struct SettingsView: View {
     private var appearanceSection: some View {
         Section {
             Toggle("Number Row", isOn: $settings.numberRowEnabled)
+            
+            Toggle("Custom Background Color", isOn: $useCustomColor)
+            
+            if useCustomColor {
+                ColorPicker("Background Color", selection: $backgroundColor, supportsOpacity: false)
+            }
         } header: {
             Text("Appearance")
+        } footer: {
+            if useCustomColor {
+                Text("Keys will automatically use a lighter shade of your selected color.")
+            }
         }
     }
 
