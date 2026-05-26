@@ -78,6 +78,11 @@ struct KeyView: View {
         AlternateCharacters.alternates(for: key.primary) ?? []
     }
 
+    private var isImmediateFireKey: Bool {
+        // Keys that should fire their action immediately on press, not on release
+        key.type == .backspace || (alternates.isEmpty && key.type != .period)
+    }
+
     var body: some View {
         Group {
             if key.type == .globe {
@@ -155,6 +160,12 @@ struct KeyView: View {
                         if !isPressed {
                             isPressed = true
                             showPopup = true
+                            // For keys without alternates/punctuation (like backspace), fire tap immediately on press.
+                            // This allows backspace repeat to work properly while the key is held.
+                            // Keys with alternates/punctuation will wait for LongPressGesture to determine intent.
+                            if key.type == .backspace || (alternates.isEmpty && key.type != .period) {
+                                onTap()
+                            }
                         }
                         if showPunctuation {
                             let punctuations = PunctuationPopupView.punctuations
@@ -219,7 +230,8 @@ struct KeyView: View {
                                 ? alternates[idx].uppercased()
                                 : alternates[idx]
                             onAlternateChar?(char)
-                        } else if !showAlternates && !showPunctuation {
+                        } else if !showAlternates && !showPunctuation && !isImmediateFireKey {
+                            // Only call onTap for delayed-fire keys. Immediate-fire keys already called it in onChanged.
                             onTap()
                         }
                         isPressed = false
