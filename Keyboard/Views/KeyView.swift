@@ -26,6 +26,8 @@ struct KeyView: View {
     @State private var keyFrame: CGRect = .zero
     @State private var lastShiftTapTime: Date? = nil
 
+    private static let defaultPunctuationIndex = PunctuationPopupView.punctuations.firstIndex(of: ".") ?? 0
+
     private var displayText: String {
         switch key.type {
         case .character:
@@ -220,11 +222,12 @@ struct KeyView: View {
                         }
                     }
                     .onEnded { _ in
-                        if showPunctuation, let idx = punctuationSelectedIndex {
+                        if showPunctuation {
                             let punctuations = PunctuationPopupView.punctuations
-                            if idx < punctuations.count {
-                                onAlternateChar?(punctuations[idx])
-                            }
+                            let punct = punctuationSelectedIndex.flatMap { idx in
+                                idx < punctuations.count ? punctuations[idx] : nil
+                            } ?? "."
+                            onAlternateChar?(punct)
                         } else if showAlternates, let idx = alternateSelectedIndex, idx < alternates.count {
                             let char = shiftState.isUppercased
                                 ? alternates[idx].uppercased()
@@ -249,6 +252,7 @@ struct KeyView: View {
                         if key.type == .period {
                             showPunctuation = true
                             showPopup = false
+                            punctuationSelectedIndex = Self.defaultPunctuationIndex
                             onLongPress()
                         } else if key.type == .shift {
                             // Shift long-press no longer triggers caps lock
