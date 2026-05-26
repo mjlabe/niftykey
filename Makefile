@@ -1,10 +1,22 @@
-.PHONY: help generate build clean install test simulator open lint
+.PHONY: help generate build clean install test simulator open lint archive ipa upload-testflight
+
+# Load environment variables from .env if it exists
+-include .env
 
 PROJECT = NiftyKey.xcodeproj
 SCHEME = NiftyKey
-SIMULATOR = iPhone 16
-SIMULATOR_OS = 18.6
+SIMULATOR = iPhone 17
+SIMULATOR_OS = 26.1
 CONFIGURATION = Debug
+ARCHIVE_PATH = build/NiftyKey.xcarchive
+EXPORT_PATH = build/export
+IPA_PATH = $(EXPORT_PATH)/NiftyKey.ipa
+EXPORT_OPTIONS = build/ExportOptions.plist
+
+# TEAM: set explicitly (TEAM=XXXXXXXXXX make ipa) or auto-detected from Apple Development cert
+ifndef TEAM
+TEAM := $(shell security find-certificate -a -z -c "Apple Development" -p 2>/dev/null | openssl x509 -noout -subject 2>/dev/null | sed -n 's/.*OU=\([^,]*\).*/\1/p' | head -1)
+endif
 
 help:
 	@echo 'Usage: make [target]'
@@ -97,5 +109,56 @@ setup: ## Initial setup - install dependencies
 		echo "XcodeGen already installed"; \
 	fi
 	@echo "Setup complete"
+
+$(EXPORT_OPTIONS):
+	@test -n "$(TEAM)" || (echo "Set TEAM to your Apple Developer team ID (e.g. TEAM=XXXXXXXXXX make ipa)" && exit 1)
+	@mkdir -p build
+	@sed 's/YOUR_TEAM_ID/$(TEAM)/' ExportOptions.plist.example > $(EXPORT_OPTIONS)
+
+archive: generate ## Create Release .xcarchive for device (TestFlight)
+	@test -n "$(TEAM)" || (echo "Set TEAM to your Apple Developer team ID (e.g. TEAM=XXXXXXXXXX make ipa)" && exit 1)
+	@mkdir -p build
+	@echo "Archiving NiftyKey (team $(TEAM))..."
+	@xcodebuild -project $(PROJECT) \
+		-scheme $(SCHEME) \
+		-configuration Release \
+		-destination 'generic/platform=iOS' \
+		-archivePath $(ARCHIVE_PATH) \
+		DEVELOPMENT_TEAM=$(TEAM) \
+		CODE_SIGN_STYLE=Automatic \
+		-allowProvisioningUpdates \
+		archive
+
+ipa: archive $(EXPORT_OPTIONS) ## Export App Store IPA from archive (TestFlight)
+	@rm -rf $(EXPORT_PATH)
+	@mkdir -p $(EXPORT_PATH)
+	@echo "Exporting IPA..."
+	@xcodebuild -exportArchive \
+		-archivePath $(ARCHIVE_PATH) \
+		-exportPath $(EXPORT_PATH) \
+		-exportOptionsPlist $(EXPORT_OPTIONS) \
+		-allowProvisioningUpdates
+	@echo "IPA ready: $(IPA_PATH)"
+
+
+upload-testflight: ipa ## Upload IPA to App Store Connect (API key or app-specific password)
+	@if [ -n "$(APP_STORE_CONNECT_API_KEY)" ] && [ -n "$(APP_STORE_CONNECT_ISSUER_ID)" ]; then \
+		echo "Uploading $(IPA_PATH) to App Store Connect..."; \
+		xcrun altool --upload-app -f "$(IPA_PATH)" -t ios \
+			--apiKey "$(APP_STORE_CONNECT_API_KEY)" \
+			--apiIssuer "$(APP_STORE_CONNECT_ISSUER_ID)"; \
+	elif [ -n "$(APPLE_ID)" ] && [ -n "$(APP_SPECIFIC_PASSWORD)" ]; then \
+		echo "Uploading $(IPA_PATH) to App Store Connect..."; \
+		xcrun altool --upload-app -f "$(IPA_PATH)" -t ios \
+			-u "$(APPLE_ID)" -p "$(APP_SPECIFIC_PASSWORD)"; \
+	else \
+		echo "No upload credentials set. Use one of:"; \
+		echo "  APP_STORE_CONNECT_API_KEY + APP_STORE_CONNECT_ISSUER_ID"; \
+		echo "  APPLE_ID + APP_SPECIFIC_PASSWORD"; \
+		echo ""; \
+		echo "Or upload manually with Transporter, or:"; \
+		echo "  xcrun altool --upload-app -f $(IPA_PATH) -t ios -u YOUR_APPLE_ID -p @keychain:AC_PASSWORD"; \
+		exit 1; \
+	fi
 
 .DEFAULT_GOAL := help

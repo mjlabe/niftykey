@@ -30,6 +30,10 @@ Pods/
 .idea/
 *.sublime-*
 
+# Generated / local signing
+ExportOptions.plist
+Development.xcconfig
+
 # Generated
 *.ipa
 *.dSYM.zip
@@ -91,3 +95,5 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+.env
