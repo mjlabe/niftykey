@@ -31,7 +31,7 @@ struct SettingsView: View {
            let b = settings.customBackgroundColorBlue {
             return Color(red: r, green: g, blue: b)
         }
-        return Color(red: 0.882, green: 0.886, blue: 0.902)
+        return Color(red: 0.8196078431, green: 0.8274509804, blue: 0.8509803922)
     }
     
     private static func hasCustomColor() -> Bool {

@@ -95,13 +95,13 @@ public final class ThemeProvider: ObservableObject, @unchecked Sendable {
 
     public static let light = KeyboardTheme(
         name: "Light",
-        backgroundColor: Color(red: 0.882, green: 0.886, blue: 0.902),
+        backgroundColor: Color(red: 0.8196078431, green: 0.8274509804, blue: 0.8509803922),
         keyColor: .white,
         specialKeyColor: Color(red: 0.68, green: 0.71, blue: 0.74),
         pressedKeyColor: Color(red: 0.90, green: 0.91, blue: 0.92),
         textColor: .black,
         secondaryTextColor: Color(red: 0.4, green: 0.4, blue: 0.4),
-        suggestionBarColor: Color(red: 0.882, green: 0.886, blue: 0.902),
+        suggestionBarColor: Color(red: 0.8196078431, green: 0.8274509804, blue: 0.8509803922),
         suggestionTextColor: .black,
         borderColor: Color(red: 0.75, green: 0.77, blue: 0.79),
         shadowColor: Color.black.opacity(0.3),

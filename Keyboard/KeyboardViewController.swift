@@ -52,7 +52,7 @@ final class KeyboardViewController: UIInputViewController, TextDocumentProxyProv
         let isDark = traitCollection.userInterfaceStyle == .dark
         return isDark 
             ? UIColor(red: 0.11, green: 0.11, blue: 0.12, alpha: 1.0)
-            : UIColor(red: 0.882, green: 0.886, blue: 0.902, alpha: 1.0)
+            : UIColor(red: 0.8196078431, green: 0.8274509804, blue: 0.8509803922, alpha: 1.0)
     }
     
     override func viewDidLoad() {
